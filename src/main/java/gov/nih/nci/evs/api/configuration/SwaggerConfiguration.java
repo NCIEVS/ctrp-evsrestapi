@@ -14,29 +14,21 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-	
-	@Bean
-    public Docket api() { 
-           return new Docket(DocumentationType.SWAGGER_2)  
-             .select()                                  
-             .apis(RequestHandlerSelectors.any())              
-             .paths(PathSelectors.ant("/api/v1/ctrp/**"))                          
-             .build();
-             //.apiInfo(metaData());          
-           
-    }
-	
-	 private ApiInfo metaData() {
-	        ApiInfo apiInfo = new ApiInfo(
-	                "EVS REST API",
-	                "EVS REST API",
-	                "1.0",
-	                "Terms of service",
-	                new Contact("", "", ""),
-	               "",
-	                "");
-	        
-	        return apiInfo;
-	    }
+
+  @Bean
+  public Docket api() {
+    return new Docket(DocumentationType.SWAGGER_2).select()
+        .apis(RequestHandlerSelectors.any())
+        .paths(PathSelectors.ant("/api/v1/ctrp/**")).build();
+    // .apiInfo(metaData());
+
+  }
+
+  private ApiInfo metaData() {
+    ApiInfo apiInfo = new ApiInfo("EVS REST API", "EVS REST API", "1.0",
+        "Terms of service", new Contact("", "", ""), "", "", null);
+
+    return apiInfo;
+  }
 
 }

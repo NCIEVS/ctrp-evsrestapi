@@ -7,10 +7,6 @@ spring:
     #
     application:
         name: nci-evs-api
-        
-    
-    
-    
           
     #
     # JSON Formatting Properties
@@ -18,25 +14,16 @@ spring:
     jackson:
         serialization:
             INDENT_OUTPUT: true
-              
-   
-
-
 #
 # Management Properties
 #
 management:
     contextPath: /admin
-    
 
 info:
     app:
         name: NCI EVS API
         version: 1.0.0-SNAPSHOT
-         
-
-
-
 
 #
 # Endpoint Properties
@@ -52,8 +39,6 @@ logging:
     level:
         org.springframework: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK:WARN}       
         gov.nih.nci.evs.api: ${LOGGING_LEVEL_GOV_NIH_NCI_EVS_API:DEBUG}
-        
-  
 
 #
 # Server Properties
@@ -62,20 +47,20 @@ server:
     port: ${EVS_SERVER_PORT:8080} 
     contextPath: /            
     session:
-        persistent: false    
-        
+        persistent: false      
+   
 nci:
   evs:
     application:
-      contextPath: ${NCI_EVS_API_PATH:/api/v1/ctrp}
+      contextPath: /api/v1/ctrp
     stardog:
-      url: ${STARDOG_URL:REPLACE_WITH_URL}
-      queryUrl: ${STARDOG_QUERY_URL:REPLACE_WITH_QUERY_URL}
-      username: ${STARDOG_USERNAME:REPLACE_WITH_USERNAME}
-      password: ${STARDOG_PASSWORD:REPLACE_WITH_PASSWORD}     
-      readTimeout: ${STARDOG_READ_TIMEOUT:10000}
-      connectTimeout: ${STARDOG_CONNECT_TIMEOUT:10000}
-      graphName: ${STARDOG_GRAPH_NAME:REPLACE_WITH_GRAPH_NAME} 
-      owlfileName: ${STARDOG_OWL_FILENAME:REPLACE_WITH_OWL_FILENAME}
-      populateCacheCron: ${POPULATE_CACHE_CRON:0 0 1 * * *}
-      forcePopulateCache: ${FORCE_POPULATE_CACHE:N}     
+      url: http://localhost:5820
+      queryUrl: http://localhost:5820/NCIT2/query
+      graphName: http://NCI_T
+      username: admin
+      password: admin
+      readTimeout: 100000
+      connectTimeout: 100000
+      owlfileName: Thesaurus.owl
+      populateCacheCron: 0 0 1 * * *
+      forcePopulateCache: N
