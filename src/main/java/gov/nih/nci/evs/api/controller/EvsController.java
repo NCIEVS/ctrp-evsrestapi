@@ -430,7 +430,7 @@ public class EvsController {
 	@ApiOperation(value = "Gets all the named graphs", response = EvsConcept.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully retrieved the graph names"),
-			@ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+			@ApiResponse(code = 401, message = "You are not authorized to view the graph names"),
 			@ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
 			@ApiResponse(code = 404, message = "The resource you were trying to reach is not found") })
 	@RequestMapping(method = RequestMethod.GET, value = "/graphnames", produces = "application/json")
