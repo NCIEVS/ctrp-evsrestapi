@@ -139,19 +139,19 @@ public class SparqlQueryManagerServiceImpl implements SparqlQueryManagerService 
 		PathFinder pathFinder = new PathFinder(hierarchy);
 		paths = pathFinder.findPaths();
 		
-		System.out.println("MainTypes");
+        log.info("  starting main types");
 		HashSet <String> mainTypeSet = new HashSet <String>();
 		List <Concept> mainTypes = getConceptInSubset(CTS_API_Disease_Main_Type_Terminology_Code);
-		System.out.println("Count: " + mainTypes.size());
+        log.info("    count = " + mainTypes.size());
 		for (Concept concept: mainTypes) {
 			CTRP_MAIN_CANCER_TYPES.add(concept.getCode());
 		    mainTypeSet.add(concept.getCode());
 		}
 
-		System.out.println("categories");
+        log.info("  starting categories");
 		ArrayList <String> categoryList = new ArrayList <String>();
 		List <Concept> categories = getConceptInSubset(CTS_API_Disease_Broad_Category_Terminology_Code);
-		System.out.println("Count: " + categories.size());
+        log.info("    count = " + categories.size());
 		for (Concept concept: categories) {
 			CTRP_MAIN_CANCER_TYPES.add(concept.getCode());
 			categoryList.add(concept.getCode());
@@ -177,8 +177,10 @@ public class SparqlQueryManagerServiceImpl implements SparqlQueryManagerService 
 		categoryList.add("C2916");
 		*/
 
+        log.info("  starting main hierarchy");
 		mainTypeHierarchyUtils = new MainTypeHierarchyUtils(parentchild,mainTypeSet,categoryList,
 				diseaseStageConcepts,diseaseGradeConcepts);
+        log.info("  finished main hierarchy");
 		
 	}
 	
