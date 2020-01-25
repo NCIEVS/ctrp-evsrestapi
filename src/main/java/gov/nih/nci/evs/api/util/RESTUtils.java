@@ -58,8 +58,6 @@ public class RESTUtils {
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
     headers.setAccept(
         Arrays.asList(new MediaType("application", "sparql-results+json")));
-    System.out.print("XXX url = " + restURL);
-    System.out.print("XXX body = " + body);
     HttpEntity<?> entity = new HttpEntity<Object>(body, headers);
     String results = restTemplate.postForObject(restURL, entity, String.class);
     return results;
