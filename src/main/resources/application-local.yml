@@ -59,8 +59,8 @@ nci:
       graphName: http://NCI_T
       username: admin
       password: admin
-      readTimeout: 100000
-      connectTimeout: 100000
+      readTimeout: 60000
+      connectTimeout: 60000
       owlfileName: Thesaurus.owl
       populateCacheCron: 0 0 1 * * *
       forcePopulateCache: N

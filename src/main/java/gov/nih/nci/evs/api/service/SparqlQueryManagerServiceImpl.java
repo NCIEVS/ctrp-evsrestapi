@@ -1,16 +1,13 @@
 package gov.nih.nci.evs.api.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +15,6 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +28,6 @@ import gov.nih.nci.evs.api.model.evs.EvsAssociation;
 import gov.nih.nci.evs.api.model.evs.EvsAxiom;
 import gov.nih.nci.evs.api.model.evs.EvsConcept;
 import gov.nih.nci.evs.api.model.evs.EvsConceptFull;
-import gov.nih.nci.evs.api.model.evs.EvsConceptWithMainType;
 import gov.nih.nci.evs.api.model.evs.EvsProperty;
 import gov.nih.nci.evs.api.model.evs.EvsRelationships;
 import gov.nih.nci.evs.api.model.evs.EvsSubconcept;
@@ -970,11 +965,11 @@ public class SparqlQueryManagerServiceImpl implements SparqlQueryManagerService 
 	
 	
 	public ArrayList <String> getHierarchy() throws JsonMappingException, JsonParseException, IOException {
-		ArrayList<String> parentchild = new ArrayList <String>();
+		Set<String> parentchild = new HashSet<String>();
 		log.info("***** In getHierarchy******");
 		String queryPrefix = queryBuilderService.contructPrefix();
 		String namedGraph = getNamedGraph();
-		String query = queryBuilderService.constructHierarchyQuery(namedGraph);
+		String query = queryBuilderService.constructHierarchyQuery(namedGraph, 1);
 		String res = restUtils.runSPARQL(queryPrefix + query);
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -995,7 +990,27 @@ public class SparqlQueryManagerServiceImpl implements SparqlQueryManagerService 
 			parentchild.add(str.toString());
 		}
 		
-		return parentchild;
+        query = queryBuilderService.constructHierarchyQuery(namedGraph, 2);
+        res = restUtils.runSPARQL(queryPrefix + query);
+
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        
+        sparqlResult = mapper.readValue(res, Sparql.class);
+        bindings = sparqlResult.getResults().getBindings();
+        for (Bindings b : bindings) {
+            StringBuffer str = new StringBuffer();
+            str.append(b.getParentCode().getValue());
+            str.append("\t");
+            str.append(b.getParentLabel().getValue());
+            str.append("\t");
+            str.append(b.getChildCode().getValue());
+            str.append("\t");
+            str.append(b.getChildLabel().getValue());
+            str.append("\n");
+            parentchild.add(str.toString());
+        }		
+		return new ArrayList<>(parentchild);
 	}
 	
 	public Paths getPathToRoot(String code) {

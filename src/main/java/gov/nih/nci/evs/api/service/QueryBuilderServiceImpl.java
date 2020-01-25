@@ -538,44 +538,52 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 	// return query.toString();
 	// }
 
-	public String constructHierarchyQuery(String namedGraph) {
+	public String constructHierarchyQuery(String namedGraph, int partNum) {
 		log.info("***In constructHierarchyQuery");
-		StringBuffer query = new StringBuffer();
-		query.append("SELECT ?parentCode ?parentLabel ?childCode ?childLabel\n");
-		query.append("    {\n");
-		query.append("    GRAPH <" + namedGraph + ">\n");
-		query.append("      {\n");
-		query.append("        {\n");
-		query.append("          {\n");
-		query.append("            ?child a owl:Class .\n");
-		query.append("            ?child rdfs:label ?childLabel .\n");
-		query.append("            ?child :NHC0 ?childCode .\n");
-		query.append("            ?child rdfs:subClassOf ?parent .\n");
-		query.append("            ?parent a owl:Class .\n");
-		query.append("            ?parent rdfs:label ?parentLabel .\n");
-		query.append("            ?parent :NHC0 ?parentCode\n");
-		query.append("          }\n");
-		query.append("          FILTER (?child != ?parent)\n");
-		query.append("        }\n");
-		query.append("        UNION\n");
-		query.append("        {\n");
-		query.append("          {\n");
-		query.append("            ?child a owl:Class .\n");
-		query.append("            ?child rdfs:label ?childLabel .\n");
-		query.append("            ?child :NHC0 ?childCode .\n");
-		query.append("            ?child owl:equivalentClass ?y .\n");
-		query.append("            ?y a owl:Class .\n");
-		query.append("            ?y owl:intersectionOf ?list .\n");
-		query.append("            ?list rdf:rest*/rdf:first ?parent .\n");
-		query.append("            ?parent a owl:Class .\n");
-		query.append("            ?parent rdfs:label ?parentLabel .\n");
-		query.append("            ?parent :NHC0 ?parentCode\n");
-		query.append("          }\n");
-		query.append("          FILTER (?child != ?parent)\n");
-		query.append("        }\n");
-		query.append("      }\n");
-		query.append("    }\n");
-
+        StringBuffer query = new StringBuffer();
+		if (partNum == 1) {
+	        query.append("SELECT ?parentCode ?parentLabel ?childCode ?childLabel\n");
+	        query.append("    {\n");
+	        query.append("    GRAPH <" + namedGraph + ">\n");
+	        query.append("      {\n");
+	        query.append("        {\n");
+	        query.append("          {\n");
+	        query.append("            ?child a owl:Class .\n");
+	        query.append("            ?child rdfs:label ?childLabel .\n");
+	        query.append("            ?child :NHC0 ?childCode .\n");
+	        query.append("            ?child rdfs:subClassOf ?parent .\n");
+	        query.append("            ?parent a owl:Class .\n");
+	        query.append("            ?parent rdfs:label ?parentLabel .\n");
+	        query.append("            ?parent :NHC0 ?parentCode\n");
+	        query.append("          }\n");
+	        query.append("          FILTER (?child != ?parent)\n");
+	        query.append("        }\n");
+	        query.append("      }\n");
+	        query.append("    }\n");
+		} else if (partNum == 2) {
+	        query.append("SELECT ?parentCode ?parentLabel ?childCode ?childLabel\n");
+	        query.append("    {\n");
+	        query.append("    GRAPH <" + namedGraph + ">\n");
+	        query.append("      {\n");
+	        query.append("        {\n");
+	        query.append("          {\n");
+	        query.append("            ?child a owl:Class .\n");
+	        query.append("            ?child rdfs:label ?childLabel .\n");
+	        query.append("            ?child :NHC0 ?childCode .\n");
+	        query.append("            ?child owl:equivalentClass ?y .\n");
+	        query.append("            ?y a owl:Class .\n");
+	        query.append("            ?y owl:intersectionOf ?list .\n");
+	        query.append("            ?list rdf:rest*/rdf:first ?parent .\n");
+	        query.append("            ?parent a owl:Class .\n");
+	        query.append("            ?parent rdfs:label ?parentLabel .\n");
+	        query.append("            ?parent :NHC0 ?parentCode\n");
+	        query.append("          }\n");
+	        query.append("          FILTER (?child != ?parent)\n");
+	        query.append("        }\n");
+	        query.append("      }\n");
+	        query.append("    }\n");
+		  
+		}
 		log.debug("constructHierarchyQuery - " + query.toString());
 		return query.toString();
 	}
