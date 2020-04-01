@@ -7,6 +7,10 @@ spring:
     #
     application:
         name: nci-evs-api
+        
+    
+    
+    
           
     #
     # JSON Formatting Properties
@@ -14,16 +18,25 @@ spring:
     jackson:
         serialization:
             INDENT_OUTPUT: true
+              
+   
+
+
 #
 # Management Properties
 #
 management:
     contextPath: /admin
+    
 
 info:
     app:
         name: NCI EVS API
         version: 1.0.0-SNAPSHOT
+         
+
+
+
 
 #
 # Endpoint Properties
@@ -39,6 +52,8 @@ logging:
     level:
         org.springframework: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK:WARN}       
         gov.nih.nci.evs.api: ${LOGGING_LEVEL_GOV_NIH_NCI_EVS_API:DEBUG}
+        
+  
 
 #
 # Server Properties
@@ -47,20 +62,20 @@ server:
     port: ${EVS_SERVER_PORT:8080} 
     contextPath: /            
     session:
-        persistent: false      
-   
+        persistent: false    
+        
 nci:
   evs:
     application:
-      contextPath: /api/v1/ctrp
+      contextPath: ${NCI_EVS_API_PATH:/api/v1/ctrp}
     stardog:
-      url: http://localhost:5820
-      queryUrl: http://localhost:5820/NCIT2/query
-      graphName: http://NCI_T
-      username: admin
-      password: admin
-      readTimeout: 60000
-      connectTimeout: 60000
-      owlfileName: Thesaurus.owl
-      populateCacheCron: 0 0 1 * * *
-      forcePopulateCache: N
+      url: ${STARDOG_URL:http://sparql-evs-dev.nci.nih.gov/ctrp}
+      queryUrl: ${STARDOG_QUERY_URL:https://sparql-evs-dev.nci.nih.gov/sparql/}
+      username: ${STARDOG_USERNAME:triplereadonly}
+      password: ${STARDOG_PASSWORD:triplereadonly}     
+      readTimeout: ${STARDOG_READ_TIMEOUT:10000}
+      connectTimeout: ${STARDOG_CONNECT_TIMEOUT:10000}
+      graphName: ${STARDOG_GRAPH_NAME:http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl} 
+      owlfileName: ${STARDOG_OWL_FILENAME:Thesaurus.owl}
+      populateCacheCron: ${POPULATE_CACHE_CRON:0 0 1 * * *}
+      forcePopulateCache: ${FORCE_POPULATE_CACHE:N}     

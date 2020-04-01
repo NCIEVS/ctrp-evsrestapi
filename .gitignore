@@ -6,3 +6,4 @@ setenv.sh
 .project
 .settings
 /.gradle/
+/build/
