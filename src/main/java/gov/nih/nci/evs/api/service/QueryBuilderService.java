@@ -7,7 +7,9 @@ public interface QueryBuilderService {
 	public String constructAllGraphQuery();
 	
 	
-	public String constructPropertyQuery(String conceptCode,String namedGraph);
+    public String constructVersionQuery(String namedGraph);
+
+    public String constructPropertyQuery(String conceptCode,String namedGraph);
 	
 	public String constructAxiomQuery(String conceptCode, String namedGraph);
 	

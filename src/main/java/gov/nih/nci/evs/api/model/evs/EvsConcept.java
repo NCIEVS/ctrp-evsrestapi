@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class EvsConcept {
 
-	private String code;
+    private String code;
+    private String version;
 	private String label;
 	private List <EvsDefinition> definitions;
 	private String displayName;
@@ -29,12 +30,18 @@ public class EvsConcept {
 	private List <EvsSynonym> synonyms;
 	private List <EvsAdditionalProperty> additionalProperties;
 
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
+    public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;  
+    }
 	public String getLabel() {
 		return label;
 	}

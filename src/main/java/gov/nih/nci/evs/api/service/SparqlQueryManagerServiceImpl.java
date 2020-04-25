@@ -46,11 +46,9 @@ import gov.nih.nci.evs.api.util.PathFinder;
 import gov.nih.nci.evs.api.util.RESTUtils;
 
 @Service
-public class SparqlQueryManagerServiceImpl
-    implements SparqlQueryManagerService {
+public class SparqlQueryManagerServiceImpl implements SparqlQueryManagerService {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(SparqlQueryManagerServiceImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(SparqlQueryManagerServiceImpl.class);
 
   @Autowired
   StardogProperties stardogProperties;
@@ -110,13 +108,14 @@ public class SparqlQueryManagerServiceImpl
 
   private HierarchyUtils hierarchy = null;
 
+  private String version = null;
+
   private MainTypeHierarchyUtils mainTypeHierarchyUtils = null;
 
   @PostConstruct
   public void postInit() throws IOException {
-    restUtils = new RESTUtils(stardogProperties.getQueryUrl(),
-        stardogProperties.getUsername(), stardogProperties.getPassword(),
-        stardogProperties.getReadTimeout(),
+    restUtils = new RESTUtils(stardogProperties.getQueryUrl(), stardogProperties.getUsername(),
+        stardogProperties.getPassword(), stardogProperties.getReadTimeout(),
         stardogProperties.getConnectTimeout());
 
     populateCache();
@@ -154,6 +153,10 @@ public class SparqlQueryManagerServiceImpl
     log.info("    finding paths");
     paths = pathFinder.findPaths();
     log.info("  done get hierarchy");
+
+    log.info("  find version");
+    version = getOntologyVersion();
+    log.info("    version = " + version);
 
     log.info("  starting main types");
     HashSet<String> mainTypeSet = new HashSet<String>();
@@ -235,8 +238,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructConceptLabelQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructConceptLabelQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -262,8 +264,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructConceptLabelQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructConceptLabelQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -280,8 +281,7 @@ public class SparqlQueryManagerServiceImpl
 
   }
 
-  public Long getGetClassCounts()
-    throws JsonMappingException, JsonParseException, IOException {
+  public Long getGetClassCounts() throws JsonMappingException, JsonParseException, IOException {
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
@@ -307,8 +307,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructPropertyQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructPropertyQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -347,8 +346,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructAxiomQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructAxiomQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -457,8 +455,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructSubconceptQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructSubconceptQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -483,14 +480,12 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructSuperconceptQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructSuperconceptQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    ArrayList<EvsSuperconcept> evsSuperclasses =
-        new ArrayList<EvsSuperconcept>();
+    ArrayList<EvsSuperconcept> evsSuperclasses = new ArrayList<EvsSuperconcept>();
 
     Sparql sparqlResult = mapper.readValue(res, Sparql.class);
     Bindings[] bindings = sparqlResult.getResults().getBindings();
@@ -510,8 +505,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructAssociationsQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructAssociationsQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -523,10 +517,8 @@ public class SparqlQueryManagerServiceImpl
     for (Bindings b : bindings) {
       EvsAssociation evsAssociation = new EvsAssociation();
       evsAssociation.setRelationship(b.getRelationship().getValue());
-      evsAssociation
-          .setRelatedConceptCode(b.getRelatedConceptCode().getValue());
-      evsAssociation
-          .setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
+      evsAssociation.setRelatedConceptCode(b.getRelatedConceptCode().getValue());
+      evsAssociation.setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
       evsAssociations.add(evsAssociation);
     }
 
@@ -538,8 +530,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query = queryBuilderService
-        .constructInverseAssociationsQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructInverseAssociationsQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -551,10 +542,8 @@ public class SparqlQueryManagerServiceImpl
     for (Bindings b : bindings) {
       EvsAssociation evsAssociation = new EvsAssociation();
       evsAssociation.setRelationship(b.getRelationship().getValue());
-      evsAssociation
-          .setRelatedConceptCode(b.getRelatedConceptCode().getValue());
-      evsAssociation
-          .setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
+      evsAssociation.setRelatedConceptCode(b.getRelatedConceptCode().getValue());
+      evsAssociation.setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
       evsAssociations.add(evsAssociation);
     }
 
@@ -566,8 +555,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructInverseRolesQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructInverseRolesQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -579,10 +567,8 @@ public class SparqlQueryManagerServiceImpl
     for (Bindings b : bindings) {
       EvsAssociation evsAssociation = new EvsAssociation();
       evsAssociation.setRelationship(b.getRelationship().getValue());
-      evsAssociation
-          .setRelatedConceptCode(b.getRelatedConceptCode().getValue());
-      evsAssociation
-          .setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
+      evsAssociation.setRelatedConceptCode(b.getRelatedConceptCode().getValue());
+      evsAssociation.setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
       evsAssociations.add(evsAssociation);
     }
 
@@ -594,8 +580,7 @@ public class SparqlQueryManagerServiceImpl
 
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructRolesQuery(conceptCode, namedGraph);
+    String query = queryBuilderService.constructRolesQuery(conceptCode, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -607,10 +592,8 @@ public class SparqlQueryManagerServiceImpl
     for (Bindings b : bindings) {
       EvsAssociation evsAssociation = new EvsAssociation();
       evsAssociation.setRelationship(b.getRelationship().getValue());
-      evsAssociation
-          .setRelatedConceptCode(b.getRelatedConceptCode().getValue());
-      evsAssociation
-          .setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
+      evsAssociation.setRelatedConceptCode(b.getRelatedConceptCode().getValue());
+      evsAssociation.setRelatedConceptLabel(b.getRelatedConceptLabel().getValue());
       evsAssociations.add(evsAssociation);
     }
 
@@ -620,11 +603,11 @@ public class SparqlQueryManagerServiceImpl
   public EvsConcept getEvsConceptDetail(String conceptCode)
     throws JsonMappingException, JsonParseException, IOException {
     EvsConcept evsConcept = new EvsConcept();
+    evsConcept.setVersion(version);
     return getConcept(evsConcept, conceptCode);
   }
 
-  public EvsConcept getConcept(EvsConcept evsConcept, String conceptCode)
-    throws IOException {
+  public EvsConcept getConcept(EvsConcept evsConcept, String conceptCode) throws IOException {
 
     evsConcept.setLabel(getEvsConceptLabel(conceptCode));
     List<EvsProperty> properties = getEvsProperties(conceptCode);
@@ -643,8 +626,7 @@ public class SparqlQueryManagerServiceImpl
     evsConcept.setSubconcepts(subconcepts);
     evsConcept.setSuperconcepts(superconcepts);
     evsConcept.setSynonyms(EVSUtils.getFullSynonym(axioms));
-    evsConcept
-        .setAdditionalProperties(EVSUtils.getAdditionalProperties(properties));
+    evsConcept.setAdditionalProperties(EVSUtils.getAdditionalProperties(properties));
 
     /*
      * if (diseaseStageConcepts.containsKey(conceptCode)){
@@ -704,8 +686,7 @@ public class SparqlQueryManagerServiceImpl
       evsConcept.setIsReferenceGene(false);
     }
 
-    List<Paths> paths =
-        mainTypeHierarchyUtils.getMainMenuAncestors(conceptCode);
+    List<Paths> paths = mainTypeHierarchyUtils.getMainMenuAncestors(conceptCode);
     if (paths != null) {
       paths = removeDuplicatePathsList(paths);
       evsConcept.setMainMenuAncestors(paths);
@@ -723,8 +704,8 @@ public class SparqlQueryManagerServiceImpl
     return getConceptFull(evsConceptFull, conceptCode);
   }
 
-  public EvsConceptFull getConceptFull(EvsConceptFull evsConcept,
-    String conceptCode) throws IOException {
+  public EvsConceptFull getConceptFull(EvsConceptFull evsConcept, String conceptCode)
+    throws IOException {
 
     evsConcept.setLabel(getEvsConceptLabel(conceptCode));
     List<EvsProperty> properties = getEvsProperties(conceptCode);
@@ -770,8 +751,7 @@ public class SparqlQueryManagerServiceImpl
     evsConcept.setRoles(getEvsRoles(conceptCode));
     evsConcept.setInverseRoles(getEvsInverseRoles(conceptCode));
     evsConcept.setSynonyms(EVSUtils.getFullSynonym(axioms));
-    evsConcept
-        .setAdditionalProperties(EVSUtils.getAdditionalProperties(properties));
+    evsConcept.setAdditionalProperties(EVSUtils.getAdditionalProperties(properties));
 
     if (mainTypeHierarchyUtils.isDiseaseStage(conceptCode)) {
       evsConcept.setIsDiseaseStage(true);
@@ -815,8 +795,7 @@ public class SparqlQueryManagerServiceImpl
       evsConcept.setIsReferenceGene(false);
     }
 
-    List<Paths> paths =
-        mainTypeHierarchyUtils.getMainMenuAncestors(conceptCode);
+    List<Paths> paths = mainTypeHierarchyUtils.getMainMenuAncestors(conceptCode);
     if (paths != null) {
       paths = removeDuplicatePathsList(paths);
       evsConcept.setMainMenuAncestors(paths);
@@ -879,8 +858,7 @@ public class SparqlQueryManagerServiceImpl
     relationships.setSubconcepts(getEvsSubconcepts(conceptCode));
     relationships.setSuperconcepts(getEvsSuperconcepts(conceptCode));
     relationships.setAssociations(getEvsAssociations(conceptCode));
-    relationships
-        .setInverseAssociations(getEvsInverseAssociations(conceptCode));
+    relationships.setInverseAssociations(getEvsInverseAssociations(conceptCode));
     relationships.setRoles(getEvsRoles(conceptCode));
     relationships.setInverseRoles(getEvsInverseRoles(conceptCode));
 
@@ -892,8 +870,8 @@ public class SparqlQueryManagerServiceImpl
     log.info("***** In getCtrpBiomarkerConcepts******");
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query = queryBuilderService.constructConceptInSubsetQuery(
-        CTRP_BIOMARKER_TERMINOLOGY_CODE, namedGraph);
+    String query = queryBuilderService
+        .constructConceptInSubsetQuery(CTRP_BIOMARKER_TERMINOLOGY_CODE, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -903,8 +881,7 @@ public class SparqlQueryManagerServiceImpl
     Sparql sparqlResult = mapper.readValue(res, Sparql.class);
     Bindings[] bindings = sparqlResult.getResults().getBindings();
     for (Bindings b : bindings) {
-      biomarkerConcepts.put(b.getConceptCode().getValue(),
-          b.getConceptLabel().getValue());
+      biomarkerConcepts.put(b.getConceptCode().getValue(), b.getConceptLabel().getValue());
     }
 
     return biomarkerConcepts;
@@ -915,8 +892,8 @@ public class SparqlQueryManagerServiceImpl
     log.info("***** In getCtrpReferenceGeneConcepts******");
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query = queryBuilderService.constructConceptInSubsetQuery(
-        CTRP_REFERENCE_GENE_TERMINOLOGY_CODE, namedGraph);
+    String query = queryBuilderService
+        .constructConceptInSubsetQuery(CTRP_REFERENCE_GENE_TERMINOLOGY_CODE, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -926,8 +903,7 @@ public class SparqlQueryManagerServiceImpl
     Sparql sparqlResult = mapper.readValue(res, Sparql.class);
     Bindings[] bindings = sparqlResult.getResults().getBindings();
     for (Bindings b : bindings) {
-      geneConcepts.put(b.getConceptCode().getValue(),
-          b.getConceptLabel().getValue());
+      geneConcepts.put(b.getConceptCode().getValue(), b.getConceptLabel().getValue());
     }
 
     return geneConcepts;
@@ -938,8 +914,7 @@ public class SparqlQueryManagerServiceImpl
     log.info("***** In getDiseaseIsStageSourceCodes******");
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructDiseaseIsStageSourceCodesQuery(namedGraph);
+    String query = queryBuilderService.constructDiseaseIsStageSourceCodesQuery(namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -949,8 +924,7 @@ public class SparqlQueryManagerServiceImpl
     Sparql sparqlResult = mapper.readValue(res, Sparql.class);
     Bindings[] bindings = sparqlResult.getResults().getBindings();
     for (Bindings b : bindings) {
-      diseaseConcepts.put(b.getConceptCode().getValue(),
-          b.getConceptLabel().getValue());
+      diseaseConcepts.put(b.getConceptCode().getValue(), b.getConceptLabel().getValue());
     }
 
     return diseaseConcepts;
@@ -961,20 +935,17 @@ public class SparqlQueryManagerServiceImpl
     log.info("***** In getDiseaseIsGradeSourceCodes******");
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructDiseaseIsGradeSourceCodesQuery(namedGraph);
+    String query = queryBuilderService.constructDiseaseIsGradeSourceCodesQuery(namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    HashMap<String, String> diseaseGradeConcepts =
-        new HashMap<String, String>();
+    HashMap<String, String> diseaseGradeConcepts = new HashMap<String, String>();
 
     Sparql sparqlResult = mapper.readValue(res, Sparql.class);
     Bindings[] bindings = sparqlResult.getResults().getBindings();
     for (Bindings b : bindings) {
-      diseaseGradeConcepts.put(b.getConceptCode().getValue(),
-          b.getConceptLabel().getValue());
+      diseaseGradeConcepts.put(b.getConceptCode().getValue(), b.getConceptLabel().getValue());
     }
 
     return diseaseGradeConcepts;
@@ -985,8 +956,7 @@ public class SparqlQueryManagerServiceImpl
     log.info("***** In getConceptInSubset******");
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query =
-        queryBuilderService.constructConceptInSubsetQuery(code, namedGraph);
+    String query = queryBuilderService.constructConceptInSubsetQuery(code, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -1185,13 +1155,13 @@ public class SparqlQueryManagerServiceImpl
     return uniquePaths;
   }
 
-  public List<MatchedConcept> search(String searchTerm, String property,
-    String limit) throws JsonParseException, JsonMappingException, IOException {
+  public List<MatchedConcept> search(String searchTerm, String property, String limit)
+    throws JsonParseException, JsonMappingException, IOException {
     log.info("***** In search******");
     String queryPrefix = queryBuilderService.contructPrefix();
     String namedGraph = getNamedGraph();
-    String query = queryBuilderService.constructSearchQuery(searchTerm,
-        property, limit, namedGraph);
+    String query =
+        queryBuilderService.constructSearchQuery(searchTerm, property, limit, namedGraph);
     String res = restUtils.runSPARQL(queryPrefix + query);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -1222,6 +1192,21 @@ public class SparqlQueryManagerServiceImpl
 
     return matchedConcepts;
 
+  }
+
+  public String getOntologyVersion() throws JsonParseException, JsonMappingException, IOException {
+    String queryPrefix = queryBuilderService.contructPrefix();
+    String namedGraph = getNamedGraph();
+    String query = queryBuilderService.constructVersionQuery(namedGraph);
+    String res = restUtils.runSPARQL(queryPrefix + query);
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    Sparql sparqlResult = mapper.readValue(res, Sparql.class);
+    Bindings[] bindings = sparqlResult.getResults().getBindings();
+    for (Bindings b : bindings) {
+      return b.getPropertyValue().getValue();
+    }
+    return null;
   }
 
   public List<MatchedConcept> search(FilterCriteriaFields filterCriteriaFields)
@@ -1275,21 +1260,19 @@ public class SparqlQueryManagerServiceImpl
       searchTerm = searchTerm.substring(0, searchTerm.length() - 5);
     }
 
-    matchConcepts = search(searchTerm, filterCriteriaFields.getProperty(),
-        filterCriteriaFields.getLimit());
+    matchConcepts =
+        search(searchTerm, filterCriteriaFields.getProperty(), filterCriteriaFields.getLimit());
 
     if (searchType.equalsIgnoreCase("match") && (term != null)) {
-      matchConcepts = matchConcepts
-          .stream().parallel().filter(matchedConcept -> matchedConcept
-              .getPropertyValue().equalsIgnoreCase(term))
+      matchConcepts = matchConcepts.stream().parallel()
+          .filter(matchedConcept -> matchedConcept.getPropertyValue().equalsIgnoreCase(term))
           .collect(Collectors.toList());
     }
 
     if (searchType.equalsIgnoreCase("startswith") && (term != null)) {
       String termLower = term.toLowerCase();
-      matchConcepts = matchConcepts.stream().parallel()
-          .filter(matchedConcept -> matchedConcept.getPropertyValue()
-              .toLowerCase().startsWith(termLower))
+      matchConcepts = matchConcepts.stream().parallel().filter(
+          matchedConcept -> matchedConcept.getPropertyValue().toLowerCase().startsWith(termLower))
           .collect(Collectors.toList());
     }
 

@@ -47,22 +47,33 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 		return prefix;
 	}
 	
-	public String constructAllGraphQuery() {
-		StringBuffer query = new StringBuffer();
-		query.append("select distinct ?graphName where { graph ?graphName {?s ?p ?o} }");
-		log.debug("constructAllGraphQuery - " + query.toString());
-		return query.toString();
-	}
+    public String constructAllGraphQuery() {
+      StringBuffer query = new StringBuffer();
+      query.append("select distinct ?graphName where { graph ?graphName {?s ?p ?o} }");
+      log.debug("constructAllGraphQuery - " + query.toString());
+      return query.toString();
+    }
+
+    public String constructVersionQuery(String namedGraph) {
+      StringBuffer query = new StringBuffer();
+      query.append("SELECT ?propertyValue\n");
+      query.append("{ GRAPH <" + namedGraph + ">");
+      query.append("  { ?source a owl:Ontology . \n");
+      query.append("    ?source owl:versionInfo ?propertyValue. \n");
+      query.append("  } }\n");
+      log.debug("constructVersionQuery - " + query.toString());
+      return query.toString();
+    }
 
 	public String constructConceptLabelQuery(String conceptCode, String namedGraph) {
 		StringBuffer query = new StringBuffer();
-		query.append("SELECT ?conceptLabel\n");
-		query.append("{ GRAPH <" + namedGraph + ">");
-		query.append("  { ?concept a owl:Class .\n");
-		query.append("    ?concept :NHC0 " + "\"" + conceptCode + "\" .\n");
-		query.append("    ?concept rdfs:label ?conceptLabel \n");
-		query.append("  }\n");
-		query.append("}\n");
+        query.append("SELECT ?conceptLabel\n");
+        query.append("{ GRAPH <" + namedGraph + ">");
+        query.append("  { ?concept a owl:Class .\n");
+        query.append("    ?concept :NHC0 " + "\"" + conceptCode + "\" .\n");
+        query.append("    ?concept rdfs:label ?conceptLabel \n");
+        query.append("  }\n");
+        query.append("}\n");
 
 		log.debug("constructConceptLabelQuery - " + query.toString());
 		return query.toString();
