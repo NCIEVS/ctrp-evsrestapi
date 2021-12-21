@@ -69,13 +69,13 @@ nci:
     application:
       contextPath: ${NCI_EVS_API_PATH:/api/v1/ctrp}
     stardog:
-      url: ${STARDOG_URL:http://sparql-evs-dev.nci.nih.gov/ctrp}
-      queryUrl: ${STARDOG_QUERY_URL:https://sparql-evs-dev.nci.nih.gov/sparql/}
-      username: ${STARDOG_USERNAME:triplereadonly}
-      password: ${STARDOG_PASSWORD:triplereadonly}     
+      url: ${STARDOG_URL:http://localhost:5820}
+      queryUrl: ${STARDOG_QUERY_URL:http://localhost:5820/sparql/}
+      username: ${STARDOG_USERNAME:admin}
+      password: ${STARDOG_PASSWORD:admin}     
       readTimeout: ${STARDOG_READ_TIMEOUT:10000}
       connectTimeout: ${STARDOG_CONNECT_TIMEOUT:10000}
-      graphName: ${STARDOG_GRAPH_NAME:http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl} 
+      graphName: ${STARDOG_GRAPH_NAME:http://NCI_T_2012b} 
       owlfileName: ${STARDOG_OWL_FILENAME:Thesaurus.owl}
       populateCacheCron: ${POPULATE_CACHE_CRON:0 0 1 * * *}
       forcePopulateCache: ${FORCE_POPULATE_CACHE:N}     
